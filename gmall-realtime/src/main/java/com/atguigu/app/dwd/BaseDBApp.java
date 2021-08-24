@@ -13,13 +13,11 @@ import org.apache.flink.api.common.functions.FilterFunction;
 import org.apache.flink.api.common.state.MapStateDescriptor;
 import org.apache.flink.streaming.api.datastream.*;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.apache.flink.streaming.api.functions.co.BroadcastProcessFunction;
-import org.apache.flink.util.Collector;
 import org.apache.flink.util.OutputTag;
 
 public class BaseDBApp {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
         //TODO 1.获取执行环境
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
@@ -79,8 +77,11 @@ public class BaseDBApp {
         DataStream<JSONObject> hbase = kafka.getSideOutput(hbaseTag);
 
         //TODO 8.将Kafka数据写入Kafka主题,将HBase数据写入Phoenix表
+        kafka.print("Kafka>>>>>>>>");
+        hbase.print("HBase>>>>>>>>");
 
         //TODO 9.启动任务
+        env.execute("BaseDBApp");
 
     }
 
