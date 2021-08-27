@@ -23,6 +23,8 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 
+//数据流：web/app -> Nginx -> SpringBoot -> Kafka(ods) -> FlinkApp -> Kafka(dwd) -> FlinkApp -> Kafka(dwm)
+//程  序：mockLog -> Nginx -> Logger.sh  -> Kafka(ZK)  -> BaseLogApp -> kafka -> UserJumpDetailApp -> Kafka
 public class UserJumpDetailApp {
 
     public static void main(String[] args) throws Exception {
@@ -52,11 +54,11 @@ public class UserJumpDetailApp {
                 .assignTimestampsAndWatermarks(WatermarkStrategy
                         .<JSONObject>forBoundedOutOfOrderness(Duration.ofSeconds(2))
                         .withTimestampAssigner(new SerializableTimestampAssigner<JSONObject>() {
-                    @Override
-                    public long extractTimestamp(JSONObject element, long recordTimestamp) {
-                        return element.getLong("ts");
-                    }
-                }));
+                            @Override
+                            public long extractTimestamp(JSONObject element, long recordTimestamp) {
+                                return element.getLong("ts");
+                            }
+                        }));
 
         //TODO 4.定义模式序列
         Pattern<JSONObject, JSONObject> pattern = Pattern.<JSONObject>begin("start").where(new SimpleCondition<JSONObject>() {
@@ -72,6 +74,18 @@ public class UserJumpDetailApp {
                 return lastPageId == null || lastPageId.length() <= 0;
             }
         }).within(Time.seconds(10));
+
+        //使用循环模式  定义模式序列
+        Pattern.<JSONObject>begin("start").where(new SimpleCondition<JSONObject>() {
+            @Override
+            public boolean filter(JSONObject value) throws Exception {
+                String lastPageId = value.getJSONObject("page").getString("last_page_id");
+                return lastPageId == null || lastPageId.length() <= 0;
+            }
+        })
+                .times(2)
+                .consecutive() //指定严格近邻(next)
+                .within(Time.seconds(10));
 
         //TODO 5.将模式序列作用到流上
         PatternStream<JSONObject> patternStream = CEP
