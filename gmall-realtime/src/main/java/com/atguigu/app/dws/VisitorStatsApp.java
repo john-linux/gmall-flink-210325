@@ -3,6 +3,7 @@ package com.atguigu.app.dws;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.atguigu.bean.VisitorStats;
+import com.atguigu.utils.ClickHouseUtil;
 import com.atguigu.utils.DateTimeUtil;
 import com.atguigu.utils.MyKafkaUtil;
 import org.apache.flink.api.common.eventtime.SerializableTimestampAssigner;
@@ -167,6 +168,7 @@ public class VisitorStatsApp {
 
         //TODO 8.将数据写入ClickHouse
         result.print(">>>>>>>>>>>");
+        result.addSink(ClickHouseUtil.getSink("insert into visitor_stats_210325 values(?,?,?,?,?,?,?,?,?,?,?,?)"));
 
         //TODO 9.启动任务
         env.execute("VisitorStatsApp");
