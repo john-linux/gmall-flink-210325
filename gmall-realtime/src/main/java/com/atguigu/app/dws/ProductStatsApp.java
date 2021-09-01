@@ -32,6 +32,10 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.concurrent.TimeUnit;
 
+//数据流：
+// app/web -> nginx -> SpringBoot -> Kafka(ods) -> FlinkApp -> Kafka(dwd) -> FlinkApp -> ClickHouse
+// app/web -> nginx -> SpringBoot -> Mysql -> FlinkApp -> Kafka(ods) -> FlinkApp -> Kafka/Phoenix -> FlinkApp -> Kafka(dwm) -> FlinkApp -> ClickHouse
+//程  序： mock -> nginx -> logger.sh -> Kafka(ZK)/Phoenix(HDFS/HBASE/ZK) -> Redis -> ClickHouse
 public class ProductStatsApp {
 
     public static void main(String[] args) throws Exception {
@@ -138,7 +142,7 @@ public class ProductStatsApp {
             return ProductStats.builder()
                     .sku_id(orderWide.getSku_id())
                     .order_sku_num(orderWide.getSku_num())
-                    .order_amount(orderWide.getOrder_price())
+                    .order_amount(orderWide.getSplit_total_amount())
                     .orderIdSet(orderIds)
                     .ts(DateTimeUtil.toTs(orderWide.getCreate_time()))
                     .build();
@@ -153,7 +157,7 @@ public class ProductStatsApp {
 
             return ProductStats.builder()
                     .sku_id(paymentWide.getSku_id())
-                    .payment_amount(paymentWide.getOrder_price())
+                    .payment_amount(paymentWide.getSplit_total_amount())
                     .paidOrderIdSet(orderIds)
                     .ts(DateTimeUtil.toTs(paymentWide.getPayment_create_time()))
                     .build();
@@ -326,6 +330,7 @@ public class ProductStatsApp {
 
 
         //TODO 8.将数据写入ClickHouse
+        productStatsWithTmDS.print();
         productStatsWithTmDS.addSink(ClickHouseUtil.getSink("insert into table product_stats_210325 values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"));
 
         //TODO 9.启动任务
