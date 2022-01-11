@@ -20,7 +20,7 @@ public class FlinkCDC {
         env.setParallelism(1);
 
         //1.1 开启CK并指定状态后端为FS    memory  fs  rocksdb
-        env.setStateBackend(new FsStateBackend("hdfs://hadoop102:8020/gmall-flink-210325/ck"));
+        env.setStateBackend(new FsStateBackend("hdfs://hadoop102:9820/gmall-flink-210325/ck"));
         env.enableCheckpointing(5000L);
         env.getCheckpointConfig().setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE);
         env.getCheckpointConfig().setCheckpointTimeout(10000L);
@@ -35,8 +35,8 @@ public class FlinkCDC {
                 .port(3306)
                 .username("root")
                 .password("000000")
-                .databaseList("gmall-210325-flink")
-                .tableList("gmall-210325-flink.z_user_info")   //如果不添加该参数,则消费指定数据库中所有表的数据.如果指定,指定方式为db.table
+                .databaseList("gmall2021")
+                .tableList("gmall2021.base_trademark")   //如果不添加该参数,则消费指定数据库中所有表的数据.如果指定,指定方式为db.table
                 .deserializer(new StringDebeziumDeserializationSchema())
                 .startupOptions(StartupOptions.initial())
                 .build();

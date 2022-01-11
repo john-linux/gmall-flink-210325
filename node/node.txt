@@ -1,0 +1,21 @@
+
+
+架构分析
+    sqoop导入数据的方式
+       全量：where 1=1
+       增量：where 创建时间=当天
+       新增及变化：where 创建时间=当天 or 操作时间=当天
+       特殊: 只导入一次
+    Flume
+       TailDirSource
+          优点:断点续传，监控多目录多文件，实时监控
+          缺点:当文件更名之后会重新读取该文件造成重复
+          注意:
+             1.要使用不更名打印日志框架(logback)
+                hive.log-2021-08-20
+                hive.log-2021-08-21
+             2.修改源码,让TailDirSource 判断文件时纸刊iNode值hive.log
+
+       KafkaChannel:
+          有点: 将数据写入Kafka,省了一层sink
+

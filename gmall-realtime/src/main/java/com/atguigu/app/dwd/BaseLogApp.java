@@ -79,10 +79,8 @@ public class BaseLogApp {
 
                         //判断isNew标记是否为"1"
                         if ("1".equals(isNew)) {
-
                             //获取状态数据
                             String state = valueState.value();
-
                             if (state != null) {
                                 //修改isNew标记
                                 value.getJSONObject("common").put("is_new", "0");
@@ -90,20 +88,17 @@ public class BaseLogApp {
                                 valueState.update("1");
                             }
                         }
-
                         return value;
                     }
                 });
 
         //TODO 5.分流  侧输出流  页面：主流  启动：侧输出流  曝光：侧输出流
-        OutputTag<String> startTag = new OutputTag<String>("start") {
-        };
-        OutputTag<String> displayTag = new OutputTag<String>("display") {
-        };
+        OutputTag<String> startTag = new OutputTag<String>("start") {};
+        OutputTag<String> displayTag = new OutputTag<String>("display") {};
+
         SingleOutputStreamOperator<String> pageDS = jsonObjWithNewFlagDS.process(new ProcessFunction<JSONObject, String>() {
             @Override
             public void processElement(JSONObject value, Context ctx, Collector<String> out) throws Exception {
-
                 //获取启动日志字段
                 String start = value.getString("start");
                 if (start != null && start.length() > 0) {

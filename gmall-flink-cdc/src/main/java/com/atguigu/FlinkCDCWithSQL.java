@@ -27,7 +27,7 @@ public class FlinkCDCWithSQL {
                 " 'port' = '3306', " +
                 " 'username' = 'root', " +
                 " 'password' = '000000', " +
-                " 'database-name' = 'gmall-210325-flink', " +
+                " 'database-name' = 'gmall2021', " +
                 " 'table-name' = 'base_trademark' " +
                 ")");
 
@@ -40,7 +40,5 @@ public class FlinkCDCWithSQL {
 
         //5.启动任务
         env.execute("FlinkCDCWithSQL");
-
     }
-
 }

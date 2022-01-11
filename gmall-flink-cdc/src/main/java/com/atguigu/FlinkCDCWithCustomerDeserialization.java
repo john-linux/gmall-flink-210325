@@ -23,8 +23,8 @@ public class FlinkCDCWithCustomerDeserialization {
                 .port(3306)
                 .username("root")
                 .password("000000")
-                .databaseList("gmall-210325-flink")
-                .tableList("gmall-210325-flink.base_trademark")   //如果不添加该参数,则消费指定数据库中所有表的数据.如果指定,指定方式为db.table
+                .databaseList("gmall2021")
+                .tableList("gmall2021.base_trademark")   //如果不添加该参数,则消费指定数据库中所有表的数据.如果指定,指定方式为db.table
                 .deserializer(new CustomerDeserialization())
                 .startupOptions(StartupOptions.initial())
                 .build();

@@ -52,7 +52,6 @@ public class BaseDBApp {
                     public boolean filter(JSONObject value) throws Exception {
                         //取出数据的操作类型
                         String type = value.getString("type");
-
                         return !"delete".equals(type);
                     }
                 });
